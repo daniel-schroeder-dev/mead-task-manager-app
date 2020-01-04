@@ -1,0 +1,39 @@
+const express = require('express');
+const auth = require('../middleware/auth');
+const db = require('../db/db');
+
+const router = express.Router();
+
+router.use(auth);
+
+router.get('/', async (req, res, next) => {
+  const dbResponse = await db.readAllTasks(req.user._id, req.query);
+  res.status(dbResponse.statusCode).json(dbResponse);
+});
+
+router.post('/', async (req, res, next) => {
+  req.body.owner = req.user._id; 
+  const dbResponse = await db.create('task', req.body);
+  res.status(dbResponse.statusCode).json(dbResponse);
+});
+
+router.get('/:id', async (req, res, next) => {
+  try {
+    const dbResponse = await db.readTask(req.params.id, req.user._id);
+    res.status(dbResponse.statusCode).json(dbResponse);
+  } catch (e) {
+    res.status(500).json({msg: e.message});
+  }
+});
+
+router.patch('/:id', async (req, res, next) => {
+  const dbResponse = await db.updateTask(req.params.id, req.user._id, req.body);
+  res.status(dbResponse.statusCode).json(dbResponse);
+});
+
+router.delete('/:id', async (req, res, next) => {
+  const dbResponse = await db.deleteTask(req.params.id, req.user._id);
+  res.status(dbResponse.statusCode).json(dbResponse);
+});
+
+module.exports = router;
