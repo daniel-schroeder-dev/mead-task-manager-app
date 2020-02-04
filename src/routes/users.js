@@ -48,11 +48,11 @@ router.post('/login', async (req, res, next) => {
 
   try {
     const dbResponse = await User.findByCredentials(req.body.email, req.body.password);
-    if (dbResponse.statusCode > 299) return res.status(dbResponse.statusCode).json(dbResponse);
     dbResponse.authToken = await dbResponse.user.generateAuthToken();
     res.status(dbResponse.statusCode).json(dbResponse);
   } catch (e) {
-    res.status(500).json({ msg: e.message });
+    console.log(e);
+    res.status(e.status).json(e.message);
   }
 });
 

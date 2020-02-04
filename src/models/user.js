@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const ResponseError = require('../utils/responseError');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -62,10 +63,7 @@ userSchema.statics.findByCredentials = async function (email, password) {
   const user = await this.findOne({ email });
 
   if (!user) {
-    return {
-      statusCode: 400,
-      statusMessage: 'Login failed',
-    };
+    throw new ResponseError(400, 'Login failed');
   }
 
   const passwordMatch = await bcrypt.compare(password, user.password);
