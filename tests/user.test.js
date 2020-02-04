@@ -28,7 +28,10 @@ test('Should login existing user', async () => {
   await request(app)
     .post('/users/login')
     .send(testUser)
-    .expect(200);
+    .expect(200)
+    .expect((res) => {
+      expect(res.body.email).toBe(testUser.email);
+    });
 });
 
 test('Should not login nonexistent user', async () => {
@@ -38,5 +41,6 @@ test('Should not login nonexistent user', async () => {
       email: 'nope@gmail.com',
       password: 'nonsuchpass',
     })
-    .expect(400);
+    .expect(400)
+    .expect('"Login failed"');
 });
