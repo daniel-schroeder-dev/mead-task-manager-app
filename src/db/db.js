@@ -32,11 +32,7 @@ exports.create = async (model, doc) => {
 
     await model.save();
     
-    return { 
-      statusCode: 201,
-      msg: `${Model.modelName.toUpperCase()} created`,
-      [Model.modelName.toLowerCase()]: model
-    };
+    return model;
   
   } catch (e) {
     return {

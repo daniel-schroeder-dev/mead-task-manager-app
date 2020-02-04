@@ -21,7 +21,10 @@ test('Should signup a new user', async () => {
       email: 'daniel@gmail.com',
       password: 'myPass123',
     })
-    .expect(201);
+    .expect(201)
+    .expect((res) => {
+      expect(res.body.email).toBe('daniel@gmail.com');
+    });
 });
 
 test('Should login existing user', async () => {
@@ -42,5 +45,7 @@ test('Should not login nonexistent user', async () => {
       password: 'nonsuchpass',
     })
     .expect(400)
-    .expect('"Login failed"');
+    .expect((res) => {
+      expect(res.body).toBe('Login failed');
+    });
 });
