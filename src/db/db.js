@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const User = require('../models/user');
 const Task = require('../models/task');
+const ResponseError = require('../utils/responseError');
 
 const connectionOptions = {
   useNewUrlParser: true,
@@ -22,24 +23,20 @@ mongoose.connection.on('connected', () => {
 
 const isBoolean = (val) => val === "true" || val === "false";
 
-exports.create = async (model, doc) => {
+exports.create = async (modelToCreate, doc) => {
 
-  const Model = model === 'task' ? Task : User;
+  const Model = modelToCreate === 'task' ? Task : User;
+
+  const model = new Model(doc);
 
   try {
-
-    const model = new Model(doc);
-
     await model.save();
-    
-    return model;
-  
-  } catch (e) {
-    return {
-      statusCode: 400,
-      msg: e.message,
-    };
+  } catch(e) {
+    throw new ResponseError(400, e.message);
   }
+    
+  return model;
+  
 };
 
 exports.readAllTasks = async (owner, query) => {

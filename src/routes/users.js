@@ -40,7 +40,7 @@ router.post('/', async (req, res, next) => {
     // sendEmail('signup', user.email, user.name);
     res.status(201).json(user);
   } catch (e) {
-    res.status(500).json({ msg: e.message });
+    res.status(e.status).json(e.message);
   }
 });
 

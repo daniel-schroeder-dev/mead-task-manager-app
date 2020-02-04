@@ -27,6 +27,18 @@ test('Should signup a new user', async () => {
     });
 });
 
+test('Should fail to signup a new user', async () => {
+  await request(app)
+    .post('/users')
+    .send({
+      invalid: 'Data',
+    })
+    .expect(400)
+    .expect((res) => {
+      expect(res.body).toMatch(/^User validation failed/);
+    });
+});
+
 test('Should login existing user', async () => {
   await request(app)
     .post('/users/login')
