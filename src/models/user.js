@@ -75,10 +75,7 @@ userSchema.statics.findByCredentials = async function (email, password) {
     };
   }
 
-  return {
-    statusCode: 200,
-    user,
-  };
+  return user;
 
 };
 

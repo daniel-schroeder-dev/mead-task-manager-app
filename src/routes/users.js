@@ -47,11 +47,10 @@ router.post('/', async (req, res, next) => {
 router.post('/login', async (req, res, next) => {
 
   try {
-    const dbResponse = await User.findByCredentials(req.body.email, req.body.password);
-    dbResponse.authToken = await dbResponse.user.generateAuthToken();
-    res.status(dbResponse.statusCode).json(dbResponse);
+    const user = await User.findByCredentials(req.body.email, req.body.password);
+    await user.generateAuthToken();
+    res.status(200).json(user);
   } catch (e) {
-    console.log(e);
     res.status(e.status).json(e.message);
   }
 });
