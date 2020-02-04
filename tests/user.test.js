@@ -1,5 +1,10 @@
-const request = require('supertest');
 const app = require('../app');
+
+/*
+*   Ensures you don't have to call request(app).method().etc... everytime you 
+*   use supertest.
+*/
+const request = require('supertest')(app);
 const User = require('../src/models/user');
 const mongoose = require('mongoose');
 
@@ -28,7 +33,7 @@ describe('User signup routes', () => {
       password: 'myPass123',
     };
     
-    const res = await request(app).post('/users').send(newUser);
+    const res = await request.post('/users').send(newUser);
     
     expect(res.statusCode).toBe(201);
     expect(res.body.email).toBe(newUser.email);
@@ -37,7 +42,7 @@ describe('User signup routes', () => {
 
   test('Should fail to signup a new user', async () => {
     
-    const res = await request(app).post('/users').send({ invalid: 'Data' });
+    const res = await request.post('/users').send({ invalid: 'Data' });
     
     expect(res.statusCode).toBe(400);
     expect(res.body).toMatch(/^User validation failed/);
@@ -50,7 +55,7 @@ describe('User login routes', () => {
   
   test('Should login existing user', async () => {
     
-    const res = await request(app).post('/users/login').send(existingUser);
+    const res = await request.post('/users/login').send(existingUser);
     
     expect(res.statusCode).toBe(200);
     expect(res.body.email).toBe(existingUser.email);
@@ -64,7 +69,7 @@ describe('User login routes', () => {
       password: 'nonsuchpass',
     };
 
-    const res = await request(app).post('/users/login').send()
+    const res = await request.post('/users/login').send()
     
     expect(res.statusCode).toBe(400);
     expect(res.body).toBe('Login failed');
@@ -78,11 +83,20 @@ describe('User profile routes', () => {
   test('Should get user\'s profile', async () => {
 
     const [ user ] = await User.find({ email: existingUser.email });
-    const authToken = user.authTokens.pop().token;
+    authToken = user.authTokens.pop().token;
 
-    const res = await request(app).get('/users/me').set('Authorization', 'Bearer ' + authToken);
+    const res = await request.get('/users/me').set('Authorization', `Bearer ${authToken}`);
 
     expect(res.body.email).toBe(existingUser.email);
+
+  });
+
+  test('Should not get user\'s profile for unauthenticated user', async () => {
+    
+    const res = await request.get('/users/me');
+
+    expect(res.statusCode).toBe(401);
+    expect(res.body.error).toMatch('Invalid authentication token');
 
   });
 
