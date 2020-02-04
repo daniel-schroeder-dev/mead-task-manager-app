@@ -19,18 +19,10 @@ const limits = {
   fileSize: 1000000,
 };
 
-// const storage = multer.diskStorage({
-//   filename(req, file, cb) {
-//     cb(null, file.originalname);
-//   },
-// });
-
 const upload = multer({ 
   fileFilter,
   limits,
 });
-
-
 
 router.post('/', async (req, res, next) => {
   try {

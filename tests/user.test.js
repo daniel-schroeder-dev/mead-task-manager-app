@@ -9,9 +9,9 @@ const existingUser = {
   password: 'myPass123',
 };
 
-beforeAll(async () => {
+beforeEach(async () => {
   await User.deleteMany();
-  await new User(existingUser).save();
+  await User.create(existingUser);
 });
 
 afterAll(async () => {
@@ -71,5 +71,20 @@ describe('User login routes', () => {
   
   });
   
+});
+
+describe('User profile routes', () => {
+  
+  test('Should get user\'s profile', async () => {
+
+    const [ user ] = await User.find({ email: existingUser.email });
+    const authToken = user.authTokens.pop().token;
+
+    const res = await request(app).get('/users/me').set('Authorization', 'Bearer ' + authToken);
+
+    expect(res.body.email).toBe(existingUser.email);
+
+  });
+
 });
 
