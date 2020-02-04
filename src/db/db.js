@@ -5,6 +5,7 @@ const Task = require('../models/task');
 const connectionOptions = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useCreateIndex: true,
 };
 
 (async () => {
@@ -16,7 +17,7 @@ const connectionOptions = {
 })();
 
 mongoose.connection.on('connected', () => {
-  console.log('Connected to db!');
+  // console.log('Connected to db!');
 });
 
 const isBoolean = (val) => val === "true" || val === "false";

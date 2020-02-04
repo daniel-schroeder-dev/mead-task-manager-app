@@ -16,7 +16,7 @@ const fileFilter = (req, file, cb) => {
 }
 
 const limits = {
-  fileSize: 1_000_000,
+  fileSize: 1000000,
 };
 
 // const storage = multer.diskStorage({
@@ -48,6 +48,7 @@ router.post('/login', async (req, res, next) => {
 
   try {
     const dbResponse = await User.findByCredentials(req.body.email, req.body.password);
+    if (dbResponse.statusCode > 299) return res.status(dbResponse.statusCode).json(dbResponse);
     dbResponse.authToken = await dbResponse.user.generateAuthToken();
     res.status(dbResponse.statusCode).json(dbResponse);
   } catch (e) {
