@@ -58,6 +58,17 @@ userSchema.methods.toJSON = function() {
   return publicProfile;
 };
 
+userSchema.statics.create = async function(newUser) {
+  try {
+    const user = new this(newUser);
+    await user.generateAuthToken();
+    await user.save();
+    return user;
+  } catch(e) {
+    throw new ResponseError(400, e.message);
+  }
+}
+
 userSchema.statics.findByCredentials = async function (email, password) {
   
   const user = await this.findOne({ email });

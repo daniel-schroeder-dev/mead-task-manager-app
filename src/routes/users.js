@@ -34,8 +34,7 @@ const upload = multer({
 
 router.post('/', async (req, res, next) => {
   try {
-    const user = await db.create('user', req.body);
-    user.generateAuthToken();
+    const user = await User.create(req.body);
     // disabling this so I don't get a ton of emails during testing, but it works!
     // sendEmail('signup', user.email, user.name);
     res.status(201).json(user);
