@@ -2,6 +2,7 @@ const express = require('express');
 const auth = require('../middleware/auth');
 const db = require('../db/db');
 const Task = require('../models/task');
+const ResponseError = require('../utils/responseError');
 
 const router = express.Router();
 
@@ -20,10 +21,11 @@ router.post('/', async (req, res, next) => {
 
 router.get('/:id', async (req, res, next) => {
   try {
-    const dbResponse = await db.readTask(req.params.id, req.user._id);
-    res.status(dbResponse.statusCode).json(dbResponse);
+    const task = await Task.findOne({ _id: req.params.id, owner: req.user._id });
+    if (!task) throw new ResponseError(404, 'Task not found');
+    res.status(200).json(task);
   } catch (e) {
-    res.status(500).json({msg: e.message});
+    res.status(e.status).json(e.message);
   }
 });
 
