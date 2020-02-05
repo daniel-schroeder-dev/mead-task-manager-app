@@ -97,53 +97,6 @@ exports.readTask = async (taskId, ownerId) => {
   }
 };
 
-exports.updateUser = async (id, updateOperations) => {
-
-  const updatePaths = Object.keys(updateOperations);
-  // ensures that we only allow user to update Schema paths that we set. The _id and __v paths are set by mongoose, and we don't want the user to touch those. Could create this whitelist by hard-coding it if we wanted to filter out certain paths we created as well.
-  const allowedUpdatePaths = Object.keys(User.schema.paths).filter((key) => key[0] !== '_' );
-
-  if (!updatePaths.every((updatePath) => allowedUpdatePaths.includes(updatePath))) {
-    return {
-      statusCode: 400,
-      msg: 'Invalid update options',
-    };
-  }
-
-  const updateOptions = {
-    new: true,
-    runValidators: true,
-  };
-
-  try {
-
-    // need to load in doc to update and perform update operations at the application-level so we can run mongoose pre('save') middleware.
-    const user = await User.findById(id);
-
-    updatePaths.forEach((path) => user[path] = updateOperations[path]);
-
-    await user.save();
-
-    if (!user) {
-      return {
-        statusCode: 404,
-        msg: 'User not found',
-      };
-    }
-
-    return {
-      statusCode: 200,
-      user,
-    };
-    
-  } catch (e) {
-    return {
-      statusCode: 400,
-      msg: e.message,
-    };
-  }
-};
-
 exports.updateTask = async (id, ownerId, updateOperations) => {
 
   const updatePaths = Object.keys(updateOperations);

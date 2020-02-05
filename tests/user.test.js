@@ -133,3 +133,43 @@ describe('User delete routes', () => {
 
 });
 
+describe('Upload image routes', () => {
+
+  test('Should upload profile image', async () => {
+
+    const imagePath = 'tests/fixtures/pug.jpg';
+  
+    const res = await request.post('/users/me/avatar').attach('avatar', imagePath).set('Authorization', `Bearer ${authToken}`);
+
+    expect(res.body.msg).toBe('File uploaded');
+
+    const user = await User.findById(res.body.user._id);
+
+    expect(user).toHaveProperty('avatar');
+    expect(user.avatar).toBeInstanceOf(Buffer);
+
+  });
+
+});
+
+describe('User update routes', () => {
+
+  test('Should update valid user fields', async () => {
+    
+    const res = await request.patch('/users/me').set('Authorization', `Bearer ${authToken}`).send({ name: 'UpdatedNameBro' });
+
+    expect(res.body.name).toBe('UpdatedNameBro');
+
+  });
+
+  test('Should not update invalid user fields', async () => {
+  
+    const res = await request.patch('/users/me').set('Authorization', `Bearer ${authToken}`).send({ invalidField: 'invalidValue' });
+
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toMatch('Invalid update options');
+
+  });
+
+});
+

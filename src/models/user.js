@@ -58,6 +58,34 @@ userSchema.methods.toJSON = function() {
   return publicProfile;
 };
 
+userSchema.methods.update = async function(updateOperations) {
+
+  const updatePaths = Object.keys(updateOperations);
+  
+  // ensures that we only allow user to update Schema paths that we set. The _id and __v paths are set by mongoose, and we don't want the user to touch those. Could create this whitelist by hard-coding it if we wanted to filter out certain paths we created as well.
+  const allowedUpdatePaths = Object.keys(userSchema.paths).filter((key) => key[0] !== '_' );
+
+  if (!updatePaths.every((updatePath) => allowedUpdatePaths.includes(updatePath))) {
+    throw new ResponseError(400, 'Invalid update options');
+  }
+
+  const updateOptions = {
+    new: true,
+    runValidators: true,
+  };
+
+  try {
+
+    updatePaths.forEach((path) => this[path] = updateOperations[path]);
+    await this.save();
+    return this;
+    
+  } catch (e) {
+    throw new ResponseError(400, e.message);
+  }
+
+};
+
 userSchema.statics.create = async function(newUser) {
   try {
     const user = new this(newUser);

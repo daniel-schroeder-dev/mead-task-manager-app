@@ -106,8 +106,12 @@ router.post('/logoutAll', async (req, res, next) => {
 });
 
 router.patch('/me', async (req, res, next) => {
-  const dbResponse = await db.updateUser(req.user._id, req.body);
-  res.status(dbResponse.statusCode).json(dbResponse);
+  try {
+    const user = await req.user.update(req.body);
+    res.status(200).json(user);
+  } catch(e) {
+    res.status(e.status).json(e.message);
+  }
 });
 
 router.delete('/me', async (req, res, next) => {
