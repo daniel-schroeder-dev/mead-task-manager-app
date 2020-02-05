@@ -1,6 +1,7 @@
 const express = require('express');
 const auth = require('../middleware/auth');
 const db = require('../db/db');
+const Task = require('../models/task');
 
 const router = express.Router();
 
@@ -13,8 +14,8 @@ router.get('/', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
   req.body.owner = req.user._id; 
-  const dbResponse = await db.create('task', req.body);
-  res.status(dbResponse.statusCode).json(dbResponse);
+     const task = await Task.create(req.bod);
+  res.status(201).json(task);
 });
 
 router.get('/:id', async (req, res, next) => {

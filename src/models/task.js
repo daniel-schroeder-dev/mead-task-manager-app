@@ -18,4 +18,17 @@ const taskSchema = new mongoose.Schema({
   timestamps: true,
 });
 
+taskSchema.statics.create = async function(newTask) {
+
+    const task = new this(newTask);
+
+    try {
+      await task.save();
+      return task;
+    } catch(e) {
+      throw new ResponseError(400, e.message);
+    }
+
+};
+
 module.exports = mongoose.model('Task', taskSchema);
