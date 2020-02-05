@@ -63,6 +63,10 @@ describe('User login routes', () => {
     
     expect(res.statusCode).toBe(200);
     expect(res.body.email).toBe(testUser.email);
+
+    const user = await User.findById(res.body._id);
+
+    expect(user.authTokens.length).toBe(2);
   
   });
 
@@ -111,6 +115,10 @@ describe('User delete routes', () => {
 
     expect(res.statusCode).toBe(200);
     expect(res.body.email).toBe(testUser.email);
+
+    const user = await User.findById(res.body._id);
+
+    expect(user).toBeNull();
 
   });
 

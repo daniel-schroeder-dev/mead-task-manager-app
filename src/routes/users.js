@@ -27,8 +27,8 @@ const upload = multer({
 router.post('/', async (req, res, next) => {
   try {
     const user = await User.create(req.body);
-    // disabling this so I don't get a ton of emails during testing, but it works!
-    // sendEmail('signup', user.email, user.name);
+    // disabled through mocks so I don't get a ton of emails during testing, but it works!
+    sendEmail('signup', user.email, user.name);
     res.status(201).json(user);
   } catch (e) {
     res.status(e.status).json(e.message);
@@ -114,7 +114,7 @@ router.delete('/me', async (req, res, next) => {
   // instead of calling the db.delete method, we can simply call the remove() method on the req.user that was setup in the auth middleware. 
   try {
     await req.user.remove();
-    // sendEmail('cancel', req.user.email, req.user.name)
+    sendEmail('cancel', req.user.email, req.user.name)
     res.send(req.user);
   } catch (e) {
     res.status(500).json({ msg: 'Error removing user', error: e.message });
