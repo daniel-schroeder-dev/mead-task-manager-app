@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev": "env-cmd -f ./config/dev.env nodemon ./bin/www",
-    "test": "env-cmd -f ./config/test.env jest --watch"
+    "test": "env-cmd -f ./config/test.env jest --watch --runInBand --detectOpenHandles"
   },
   "jest": {
     "testEnvironment": "node"

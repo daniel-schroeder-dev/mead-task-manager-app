@@ -23,22 +23,6 @@ mongoose.connection.on('connected', () => {
 
 const isBoolean = (val) => val === "true" || val === "false";
 
-// exports.create = async (modelToCreate, doc) => {
-
-//   const Model = modelToCreate === 'task' ? Task : User;
-
-//   const model = new Model(doc);
-
-//   try {
-//     await model.save();
-//   } catch(e) {
-//     throw new ResponseError(400, e.message);
-//   }
-    
-//   return model;
-  
-// };
-
 exports.readAllTasks = async (owner, query) => {
 
   try {

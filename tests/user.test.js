@@ -6,25 +6,15 @@ const app = require('../app');
 */
 const request = require('supertest')(app);
 const User = require('../src/models/user');
-const mongoose = require('mongoose');
-
-const testUserData = {
-  name: 'test',
-  email: 'testUser@gmail.com',
-  password: 'myPass123',
-};
+const db = require('./fixtures/db');
 
 let testUser;
 let authToken;
 
 beforeEach(async () => {
-  await User.deleteMany();
-  testUser = await User.create(testUserData);
-  authToken = testUser.authTokens.pop().token;
-});
-
-afterAll(async () => {
-  await mongoose.connection.close();
+  const dbResponse = await db.populateDB();
+  testUser = dbResponse.testUser;
+  authToken = dbResponse.authToken;
 });
 
 describe('User signup routes', () => {
@@ -59,7 +49,7 @@ describe('User login routes', () => {
   
   test('Should login existing user', async () => {
     
-    const res = await request.post('/users/login').send(testUserData);
+    const res = await request.post('/users/login').send(db.testUserData);
     
     expect(res.statusCode).toBe(200);
     expect(res.body.email).toBe(testUser.email);
@@ -87,7 +77,7 @@ describe('User login routes', () => {
 });
 
 describe('User profile routes', () => {
-  
+
   test('Should get user\'s profile', async () => {
 
     const res = await request.get('/users/me').set('Authorization', `Bearer ${authToken}`);

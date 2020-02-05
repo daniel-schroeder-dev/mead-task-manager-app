@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const ResponseError = require('../utils/responseError');
 
 const taskSchema = new mongoose.Schema({
   description: {

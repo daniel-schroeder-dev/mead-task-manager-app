@@ -14,7 +14,7 @@ router.get('/', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
   req.body.owner = req.user._id; 
-     const task = await Task.create(req.bod);
+  const task = await Task.create(req.body);
   res.status(201).json(task);
 });
 

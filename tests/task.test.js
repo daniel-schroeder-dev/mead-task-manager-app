@@ -7,29 +7,31 @@ const app = require('../app');
 const request = require('supertest')(app);
 const User = require('../src/models/user');
 const Task = require('../src/models/task');
-const mongoose = require('mongoose');
-
-const testUserData = {
-  name: 'test',
-  email: 'testUser@gmail.com',
-  password: 'myPass123',
-};
+const db = require('./fixtures/db');
 
 let testUser;
 let authToken;
 
 beforeEach(async () => {
-  await User.deleteMany();
-  testUser = await User.create(testUserData);
-  authToken = testUser.authTokens.pop().token;
-});
-
-afterAll(async () => {
-  await mongoose.connection.close();
+  const dbResponse = await db.populateDB();
+  testUser = dbResponse.testUser;
+  authToken = dbResponse.authToken;
 });
 
 describe('Task creation routes', () => {
 
+  test('Should create a task', async () => {
 
+    const testTaskData = {
+      description: 'Test task',
+      completed: false,
+    };
+    
+    const res = await request.post('/tasks').set('Authorization', `Bearer ${authToken}`).send(testTaskData);
+
+    expect(res.statusCode).toBe(201);
+    expect(res.body.description).toBe(testTaskData.description);
+
+  });
 
 });
